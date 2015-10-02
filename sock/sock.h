@@ -98,7 +98,7 @@ void	sroute_doopt(int, char *);
 void	sroute_set(int);
 void	sleep_us(unsigned int);
 void	sockopts(int, int);
-ssize_t	dowrite(int, const void *, size_t);
+ssize_t	dowrite(int, void *, size_t);
 
 void	TELL_WAIT(void);
 void	TELL_PARENT(pid_t);

@@ -15,10 +15,10 @@
 #endif
 
 ssize_t
-dowrite(int fd, const void *vptr, size_t nbytes)
+dowrite(int fd, void *vptr, size_t nbytes)
 {
 	struct iovec	iov[UIO_MAXIOV];
-	const char		*ptr;
+	char			*ptr;
 	int				chunksize, i, n, nleft, nwritten, ntotal;
 
 	if (chunkwrite == 0 && usewritev == 0)
@@ -42,8 +42,8 @@ dowrite(int fd, const void *vptr, size_t nbytes)
 		n = (nleft >= chunksize) ? chunksize : nleft;
 		iov[i].iov_len = n;
 		if (verbose)
-			fprintf(stderr, "iov[%2d].iov_base = %x, iov[%2d].iov_len = %d\n",
-						i, iov[i].iov_base, i, iov[i].iov_len);
+			fprintf(stderr, "iov[%2d].iov_base = %p, iov[%2d].iov_len = %ld\n",
+						i, iov[i].iov_base, i, (long)iov[i].iov_len);
 		ptr += n;
 		if ((nleft -= n) == 0)
 			break;
