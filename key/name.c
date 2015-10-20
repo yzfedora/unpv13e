@@ -1,5 +1,5 @@
 #include "unp.h"
-#include <net/pfkeyv2.h>
+#include <linux/pfkeyv2.h>
 
 struct idlist {
 	int val;

@@ -1,5 +1,5 @@
 #include "unp.h"
-#include <net/pfkeyv2.h>
+#include <linux/pfkeyv2.h>
 
 /* include sadb_register */
 void
@@ -68,4 +68,5 @@ main(int argc, char **argv)
 	}
 
 	sadb_register(satype);
+	return 0;
 }

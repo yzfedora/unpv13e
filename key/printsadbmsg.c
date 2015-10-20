@@ -1,5 +1,5 @@
 #include "unp.h"
-#include <net/pfkeyv2.h>
+#include <linux/pfkeyv2.h>
 
 const char *
 get_sadb_msg_type(int type)
@@ -167,11 +167,11 @@ lifetime_print(struct sadb_ext *ext)
 		life->sadb_lifetime_exttype == SADB_EXT_LIFETIME_HARD ?
 		"Hard" :
 		"Soft");
-	printf("  %d allocations, %d bytes", life->sadb_lifetime_allocations,
-		life->sadb_lifetime_bytes);
+	printf("  %d allocations, %ld bytes", life->sadb_lifetime_allocations,
+		(unsigned long)life->sadb_lifetime_bytes);
 	if (life->sadb_lifetime_exttype == SADB_EXT_LIFETIME_CURRENT) {
 		time_t t;
-		struct tmp *tm;
+		struct tm *tm;
 		char buf[100];
 
 		/* absolute times */
@@ -188,8 +188,9 @@ lifetime_print(struct sadb_ext *ext)
 			printf("first used at %s\n", buf);
 		}
 	} else {
-		printf("%d addtime, %d usetime\n", life->sadb_lifetime_addtime,
-			life->sadb_lifetime_usetime);
+		printf("%lu addtime, %lu usetime\n",
+						(unsigned long int)life->sadb_lifetime_addtime,
+						(unsigned long int)life->sadb_lifetime_usetime);
 	}
 }
 
@@ -292,6 +293,6 @@ print_sadb_msg(struct sadb_msg *msg, int msglen)
 		default:	printf(" [unknown extension %d]\n", ext->sadb_ext_type);
 		}
 		msglen -= ext->sadb_ext_len << 3;
-		ext = (char *)ext + (ext->sadb_ext_len << 3);
+		ext = (struct sadb_ext *)((char *)ext + (ext->sadb_ext_len << 3));
 	}
 }

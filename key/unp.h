@@ -28,6 +28,7 @@
 #include	<unistd.h>
 #include	<sys/wait.h>
 #include	<sys/un.h>		/* for Unix domain sockets */
+#include	<linux/pfkeyv2.h>
 
 #ifdef	HAVE_SYS_SELECT_H
 # include	<sys/select.h>	/* for convenience */
@@ -118,11 +119,14 @@
 #define	gethostbyname2(host,family)		gethostbyname((host))
 #endif
 
+#ifndef __linux__
 /* The structure returned by recvfrom_flags() */
 struct in_pktinfo {
   struct in_addr	ipi_addr;	/* dst IPv4 address */
   int				ipi_ifindex;/* received interface index */
 };
+#endif
+
 /* $$.It in_pktinfo$$ */
 /* $$.Ib ipi_addr$$ */
 /* $$.Ib ipi_ifindex$$ */
@@ -464,4 +468,18 @@ void	 err_quit(const char *, ...);
 void	 err_ret(const char *, ...);
 void	 err_sys(const char *, ...);
 
+const char *get_sadb_msg_type(int type);
+const char *get_sadb_satype(int type);
+const char *get_auth_alg(int alg);
+const char *get_encrypt_alg(int alg);
+const char *get_sa_state(int state);
+const char *get_sadb_alg_type(int alg, int authenc);
+void sa_print(struct sadb_ext *ext);
+void supported_print(struct sadb_ext *ext);
+void lifetime_print(struct sadb_ext *ext);
+void address_print(struct sadb_ext *ext);
+void key_print(struct sadb_ext *ext);
+void print_sadb_msg(struct sadb_msg *msg, int msglen);
+int getsaalgbyname(int type, char *name);
+int getsatypebyname(char *name);
 #endif	/* __unp_h */

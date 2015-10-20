@@ -1,5 +1,5 @@
 #include "unp.h"
-#include <net/pfkeyv2.h>
+#include <linux/pfkeyv2.h>
 
 int
 salen(struct sockaddr *sa)
@@ -108,7 +108,7 @@ sadb_add(struct sockaddr *src, struct sockaddr *dst, int type, int alg,
 	 
 	msg->sadb_msg_len = len / 8;
 	printf("Sending add message:\n");
-	print_sadb_msg(buf, len);
+	print_sadb_msg((struct sadb_msg *)buf, len);
 	Write(s, buf, len);
 
 	printf("\nReply returned:\n");
@@ -156,10 +156,10 @@ main(int argc, char **argv)
 	if (ep == argv[4] || *ep != '\0' || (keybits % 8) != 0) {
 		err_quit("Invalid number of bits %s\n", argv[4]);
 	}
-	p = argv[5];
+	p = (unsigned char *)argv[5];
 	if (p[0] == '0' && (p[1] == 'x' || p[1] == 'X'))
 		p += 2;
-	len = strlen(p);
+	len = strlen((char *)p);
 	kp = keydata = malloc(keybits / 8);
 	for (i = 0; i < keybits; i += 8) {
 		int c;
@@ -167,7 +167,7 @@ main(int argc, char **argv)
 		if (len < 2) {
 			err_quit("%s: not enough bytes (expected %d)\n", argv[5], keybits / 8);
 		}
-		if (sscanf(p, "%2x", &c) != 1) {
+		if (sscanf((char *)p, "%2x", &c) != 1) {
 			err_quit("%s contains invalid hex digit\n", argv[5]);
 		}
 		*kp++ = c;
@@ -178,4 +178,5 @@ main(int argc, char **argv)
 		err_quit("%s: too many bytes (expected %d)\n", argv[5], keybits / 8);
 	}
 	sadb_add(src->ai_addr, dst->ai_addr, satype, alg, 0x9876, keybits, keydata);
+	return 0;
 }
